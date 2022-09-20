@@ -6,9 +6,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          registry-url: https://yarn.lucasstbnr.ovh/
       - name: Cache node_modules
         uses: actions/cache@v2
         with:
@@ -20,16 +17,12 @@ jobs:
           yarn install --frozen-lockfile  --network-timeout 1000000
         env:
           CI: false
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   lint:
     needs: setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          registry-url: https://yarn.lucasstbnr.ovh/
       - name: Cache node_modules
         uses: actions/cache@v2
         with:
@@ -43,9 +36,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          registry-url: https://yarn.lucasstbnr.ovh/
       - name: Cache node_modules
         uses: actions/cache@v2
         with:
@@ -60,9 +50,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          registry-url: https://yarn.lucasstbnr.ovh/
       - name: Cache node_modules
         uses: actions/cache@v2
         with:
@@ -91,4 +78,3 @@ jobs:
           MONGO_URL: ${{ secrets.MONGO_URL }}
 
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
