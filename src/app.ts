@@ -1,7 +1,7 @@
 import express, { Express } from 'express'
 
 import { databaseConnection, getCorsOptions } from '@helpers'
-import { authenticationRouter, indexRouter } from '@routes'
+import { authenticationRouter, indexRouter, userRouter } from '@routes'
 
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
@@ -18,7 +18,8 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 
 app.use('/api', indexRouter)
-app.use('/api/auth', authenticationRouter)
+app.use('/api/authenticate', authenticationRouter)
+app.use('/api/user', userRouter)
 
 databaseConnection()
   .then(() => {

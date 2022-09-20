@@ -19,3 +19,11 @@ export interface ICreateUserInput {
   confirmation: IUser['password']
   permission: IUser['permission']
 }
+
+export interface IUpdateUserInput {
+  username?: IUser['username']
+  password?: IUser['password']
+  old_password?: IUser['password']
+  confirmation?: IUser['password']
+  permission?: IUser['permission']
+}
