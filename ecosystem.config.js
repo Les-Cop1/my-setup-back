@@ -22,7 +22,9 @@ module.exports = {
         MONGO_URL: process.env.MONGO_URL,
         PORT: process.env.PORT,
 
+        TZ: process.env.TZ,
         JWT_SECRET: process.env.JWT_SECRET,
+        FILE_SECRET: process.env.FILE_SECRET,
       },
     },
   },
