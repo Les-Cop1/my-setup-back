@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'Firgal backend',
+      name: 'mySETUP',
       script: './dist/index.js',
       autorestart: true,
     },
