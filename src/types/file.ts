@@ -8,3 +8,10 @@ export interface IFile extends Document {
   data: string
   user: IUser['_id']
 }
+
+export interface ICreateFileInput {
+  buffer: Buffer
+  mimetype: string
+  originalname: string
+  size: number
+}

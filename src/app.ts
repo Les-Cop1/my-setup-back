@@ -1,7 +1,7 @@
 import express, { Express } from 'express'
 
 import { databaseConnection, getCorsOptions } from '@helpers'
-import { authenticationRouter, indexRouter, userRouter } from '@routes'
+import { authenticationRouter, fileRouter, indexRouter, userRouter } from '@routes'
 
 import { roomRouter } from './routes/room'
 import cookieParser from 'cookie-parser'
@@ -22,6 +22,7 @@ app.use('/api', indexRouter)
 app.use('/api/authenticate', authenticationRouter)
 app.use('/api/user', userRouter)
 app.use('/api/room', roomRouter)
+app.use('/api/file', fileRouter)
 
 databaseConnection()
   .then(() => {
