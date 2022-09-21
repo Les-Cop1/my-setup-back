@@ -3,6 +3,7 @@ import express, { Express } from 'express'
 import { databaseConnection, getCorsOptions } from '@helpers'
 import { authenticationRouter, indexRouter, userRouter } from '@routes'
 
+import { roomRouter } from './routes/room'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import dotenv from 'dotenv'
@@ -20,6 +21,7 @@ app.use(cookieParser())
 app.use('/api', indexRouter)
 app.use('/api/authenticate', authenticationRouter)
 app.use('/api/user', userRouter)
+app.use('/api/room', roomRouter)
 
 databaseConnection()
   .then(() => {
