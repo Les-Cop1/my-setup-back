@@ -77,4 +77,6 @@ jobs:
           PORT: ${{ secrets.PORT }}
           MONGO_URL: ${{ secrets.MONGO_URL }}
 
+          TZ: ${{ secrets.TZ }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          FILE_SECRET: ${{ secrets.FILE_SECRET }}
