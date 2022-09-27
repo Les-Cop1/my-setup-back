@@ -6,6 +6,7 @@ export interface IFile extends Document {
   name: string
   mimetype: string
   data: string
+  filename: string
   user: IUser['_id']
 }
 

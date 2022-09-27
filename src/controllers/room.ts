@@ -2,8 +2,6 @@ import { handleMongoDBErrors } from '@helpers'
 import { FileModel, ItemModel, RoomModel } from '@models'
 import { IItem, IRoom, IUpdateItemInput, IUser, ResponseType } from '@types'
 
-import { format } from 'date-fns'
-
 interface RoomObjectType {
   [index: string]: {
     _id: IRoom['_id']
@@ -192,8 +190,8 @@ export const getRoomStats = async (loggedUser: IUser) => {
 
   const [min_year, max_year] = items.reduce(
     ([min, max], item: IItem) => {
-      if (item.purchase_date) {
-        const currentYear = parseInt(format(item.purchase_date, 'yyyy'))
+      if (item.purchaseDate) {
+        const currentYear = item.purchaseDate.getFullYear()
 
         if (min > currentYear) {
           min = currentYear
@@ -211,7 +209,7 @@ export const getRoomStats = async (loggedUser: IUser) => {
   let tmp_years: any = {}
   for (let i = min_year; i <= max_year; i++) {
     tmp_years[i] = items
-      .filter((item: IItem) => i === (item.purchase_date ? parseInt(format(item.purchase_date, 'yyyy')) : 0))
+      .filter((item: IItem) => i === item.purchaseDate?.getFullYear())
       .reduce((sum: number, item: IItem) => {
         const price = item.price ? item.price : 0
         return sum + price

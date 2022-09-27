@@ -23,7 +23,7 @@ const ItemSchema: Schema = new Schema({
   price: {
     type: Number,
   },
-  purchase_date: {
+  purchaseDate: {
     type: Schema.Types.Date,
   },
   description: {

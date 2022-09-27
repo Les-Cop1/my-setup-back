@@ -2,22 +2,21 @@ import { handleMongoDBErrors } from '@helpers'
 import { FileModel, ItemModel } from '@models'
 import { IFile, IItem, IUser, ResponseType } from '@types'
 
-import { isValid, parse } from 'date-fns'
+import { isValid } from 'date-fns'
 import { Types } from 'mongoose'
 
-export const createItem = async (item, loggedUser: IUser) => {
+export const createItem = async (item: IItem, loggedUser: IUser) => {
   let response: ResponseType = {
     success: true,
   }
 
   item.user = loggedUser._id
 
-  const purchaseDate = parse(item.purchase_date, 'P', new Date())
-  if (!isValid(purchaseDate)) {
+  if (!isValid(item.purchaseDate)) {
     throw new Error('Purchase date is invalid')
   }
 
-  if (item.price < 0) {
+  if (item.price && item.price < 0) {
     throw new Error('Price cannot be negative')
   }
 
@@ -103,17 +102,16 @@ export const getBrandsName = async (loggedUser: IUser) => {
   return response
 }
 
-export const updateItem = async (_id: IItem['_id'], item, loggedUser: IUser) => {
+export const updateItem = async (_id: IItem['_id'], item: IItem, loggedUser: IUser) => {
   let response: ResponseType = {
     success: true,
   }
 
-  const purchaseDate = parse(item.purchase_date, 'P', new Date())
-  if (!isValid(purchaseDate)) {
+  if (!isValid(item.purchaseDate)) {
     throw new Error('Purchase date is invalid')
   }
 
-  if (item.price < 0) {
+  if (item.price && item.price < 0) {
     throw new Error('Price cannot be negative')
   }
 
@@ -143,7 +141,7 @@ export const updateItem = async (_id: IItem['_id'], item, loggedUser: IUser) => 
   return response
 }
 
-export const setInvoice = async (_id: IItem['_id'], file, loggedUser: IUser) => {
+export const setInvoice = async (_id: IItem['_id'], file: IFile, loggedUser: IUser) => {
   let response: ResponseType = {
     success: true,
   }
@@ -220,7 +218,7 @@ export const deleteInvoice = async (_id: IItem['_id'], loggedUser: IUser) => {
   return response
 }
 
-export const setImage = async (_id: IItem['_id'], file, loggedUser: IUser) => {
+export const setImage = async (_id: IItem['_id'], file: IFile, loggedUser: IUser) => {
   let response: ResponseType = {
     success: true,
   }

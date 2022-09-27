@@ -8,7 +8,7 @@ export interface IItem extends Document {
   user: IUser['_id']
   room: IRoom['_id']
   price?: number
-  purchase_date?: Date
+  purchaseDate?: Date
   description?: string
   link?: string
   categories?: string[]
@@ -22,7 +22,7 @@ export interface IUpdateItemInput extends Document {
   user?: IUser['_id']
   room?: IRoom['_id']
   price?: number
-  purchase_date?: Date
+  purchaseDate?: Date
   description?: string
   link?: string
   categories?: string[]
