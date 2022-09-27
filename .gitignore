@@ -4,3 +4,4 @@ yarn-error.log
 .env
 deploy.key
 dist/
+.DS_Store
