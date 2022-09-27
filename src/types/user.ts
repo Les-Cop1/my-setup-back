@@ -9,7 +9,6 @@ export interface IUser extends Document {
 export interface IGetUserInput {
   _id?: IUser['_id']
   username?: IUser['username']
-  password?: IUser['password']
   permission?: IUser['permission']
 }
 

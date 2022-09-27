@@ -95,7 +95,7 @@ export const updateUser = async (_id: string, userData: IUpdateUserInput, logged
 
   let hashPassword
   const { old_password, password: _password, confirmation, permission, ...newUserFilter } = userData
-  let newUser: IGetUserInput = newUserFilter
+  let newUser: IUpdateUserInput = newUserFilter
 
   if (loggedUser.permission < 10) {
     newUser.permission = userData.permission
