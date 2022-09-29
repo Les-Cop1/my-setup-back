@@ -25,10 +25,12 @@ router.get('/', authenticated, (req: AuthenticatedRequest, res: Response) => {
     })
   }
 
-  return res.send({
+  response = {
     ...response,
-    user: { ...req.user, token: req.cookies['auth-token'] },
-  })
+    data: { user: { ...req.user, token: req.cookies['auth-token'] } },
+  }
+
+  return res.send(response)
 })
 
 // Login

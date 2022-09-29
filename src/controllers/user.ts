@@ -102,7 +102,7 @@ export const updateUser = async (_id: string, userData: IUpdateUserInput, logged
   }
 
   // Verification des authorisation
-  if (!(loggedUser._id === _id || loggedUser.permission < 10)) {
+  if (loggedUser._id !== _id && loggedUser.permission < 10) {
     throw new Error('Unauthorized')
   }
 
@@ -116,12 +116,15 @@ export const updateUser = async (_id: string, userData: IUpdateUserInput, logged
     throw new Error('Password confirmation is required')
   }
 
-  if (userData.password && userData.password === userData.confirmation) {
+  if (userData.password && userData.password !== userData.confirmation) {
     throw new Error('Password and confirmation are not the same')
   }
 
   //Hash du mot de passe
   if (userData.password) {
+    if (!userData.old_password) {
+      throw new Error('Old password is required')
+    }
     const oldPassword = userData.old_password || ''
 
     const { password: oldPasswordDb } = oldUser

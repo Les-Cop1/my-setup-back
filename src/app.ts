@@ -27,10 +27,10 @@ app.use('/api/item', itemRouter)
 
 databaseConnection()
   .then(() => {
-    console.info('[Starting] Connected to database')
+    console.info('[starting] Connected to database')
   })
   .catch(() => {
-    console.info('[Starting] Could not connect to database')
+    console.info('[starting] Could not connect to database')
   })
 
 export default app

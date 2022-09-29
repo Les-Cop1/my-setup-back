@@ -12,7 +12,7 @@ router.get('/', authenticated, async (req: AuthenticatedRequest, res: Response) 
   }
 
   try {
-    response = { ...response, data: await getUsers(<IGetUserInput>req.query, <IUser>req.user) }
+    response = { ...response, ...(await getUsers(<IGetUserInput>req.query, <IUser>req.user)) }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
@@ -26,7 +26,7 @@ router.post('/', async (req: Request, res: Response) => {
   }
 
   try {
-    response = { ...response, data: await createUser(<ICreateUserInput>req.body) }
+    response = { ...response, ...(await createUser(<ICreateUserInput>req.body)) }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
@@ -42,7 +42,7 @@ router.put('/:_id', authenticated, async (req: AuthenticatedRequest, res: Respon
   try {
     response = {
       ...response,
-      data: await updateUser(<IUser['_id']>req.params._id, <IUpdateUserInput>req.body, <IUser>req.user),
+      ...(await updateUser(<IUser['_id']>req.params._id, <IUpdateUserInput>req.body, <IUser>req.user)),
     }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
@@ -57,7 +57,7 @@ router.delete('/:_id', authenticated, async (req: AuthenticatedRequest, res: Res
   }
 
   try {
-    response = { ...response, data: await deleteUser(<IUser['_id']>req.params._id, <IUser>req.user) }
+    response = { ...response, ...(await deleteUser(<IUser['_id']>req.params._id, <IUser>req.user)) }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
