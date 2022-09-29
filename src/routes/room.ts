@@ -13,7 +13,7 @@ router.get('/', authenticated, async (req: AuthenticatedRequest, res: Response) 
   }
 
   try {
-    response = { ...response, data: await getRooms(<IUser>req.user) }
+    response = { ...response, ...(await getRooms(<IUser>req.user)) }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
@@ -28,7 +28,7 @@ router.get('/stats', authenticated, async (req: AuthenticatedRequest, res: Respo
   }
 
   try {
-    response = { ...response, data: await getRoomStats(<IUser>req.user) }
+    response = { ...response, ...(await getRoomStats(<IUser>req.user)) }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
@@ -45,7 +45,7 @@ router.get('/:_id', authenticated, async (req: AuthenticatedRequest, res: Respon
   const { _id } = req.params
 
   try {
-    response = { ...response, data: await getRoom(<IRoom['_id']>_id, <IUser>req.user) }
+    response = { ...response, ...(await getRoom(<IRoom['_id']>_id, <IUser>req.user)) }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
@@ -62,7 +62,7 @@ router.post('/', authenticated, async (req: AuthenticatedRequest, res: Response)
   const { name } = req.body
 
   try {
-    response = { ...response, data: await createRoom(<IRoom['name']>name, <IUser>req.user) }
+    response = { ...response, ...(await createRoom(<IRoom['name']>name, <IUser>req.user)) }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
@@ -79,7 +79,7 @@ router.put('/:_id', authenticated, async (req: AuthenticatedRequest, res: Respon
   const { _id } = req.params
 
   try {
-    response = { ...response, data: await updateRoom(<IRoom['_id']>_id, <IUpdateItemInput>req.body, <IUser>req.user) }
+    response = { ...response, ...(await updateRoom(<IRoom['_id']>_id, <IUpdateItemInput>req.body, <IUser>req.user)) }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
@@ -96,7 +96,7 @@ router.delete('/:_id', authenticated, async (req: AuthenticatedRequest, res: Res
   const { _id } = req.params
 
   try {
-    response = { ...response, data: await deleteRoom(<IRoom['_id']>_id, <IUser>req.user) }
+    response = { ...response, ...(await deleteRoom(<IRoom['_id']>_id, <IUser>req.user)) }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }

@@ -21,7 +21,7 @@ router.get('/:_id', authenticated, async (req: AuthenticatedRequest, res: Respon
   const { _id } = req.params
 
   try {
-    response = { ...response, data: await getFile(<IFile['_id']>_id, <IUser>req.user) }
+    response = { ...response, ...(await getFile(<IFile['_id']>_id, <IUser>req.user)) }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
@@ -49,7 +49,7 @@ router.post('/', authenticated, async (req: AuthenticatedRequest, res: Response)
   }
 
   try {
-    response = { ...response, data: await uploadFile(<ICreateFileInput>req.file, <IUser>req.user) }
+    response = { ...response, ...(await uploadFile(<ICreateFileInput>req.file, <IUser>req.user)) }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
@@ -65,7 +65,7 @@ router.delete('/:_id', authenticated, async (req: AuthenticatedRequest, res: Res
   const { _id } = req.params
 
   try {
-    response = { ...response, data: await deleteFile(<IFile['_id']>_id, <IUser>req.user) }
+    response = { ...response, ...(await deleteFile(<IFile['_id']>_id, <IUser>req.user)) }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
