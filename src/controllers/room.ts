@@ -44,9 +44,13 @@ export const getRooms = async (loggedUser: IUser) => {
     success: true,
   }
 
-  const rooms = await RoomModel.find({ user: loggedUser._id }).exec()
+  try {
+    const rooms = await RoomModel.find({ user: loggedUser._id }).exec()
 
-  response = { ...response, data: { rooms } }
+    response = { ...response, data: { rooms } }
+  } catch (e) {
+    throw handleMongoDBErrors(e)
+  }
 
   return response
 }
