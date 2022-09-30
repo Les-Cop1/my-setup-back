@@ -1,26 +1,31 @@
 import { handleMongoDBErrors } from '@helpers'
 import { FileModel, ItemModel } from '@models'
-import { IFile, IItem, IUser, ResponseType } from '@types'
+import { ICreateItemInput, IFile, IItem, IUpdateItemInput, IUser, ResponseType } from '@types'
 
 import { isValid } from 'date-fns'
 import { Types } from 'mongoose'
 
-export const createItem = async (item: IItem, loggedUser: IUser) => {
+export const createItem = async (item: ICreateItemInput, loggedUser: IUser) => {
   let response: ResponseType = {
     success: true,
   }
 
   item.user = loggedUser._id
 
-  if (!isValid(item.purchaseDate)) {
-    throw new Error('Purchase date is invalid')
+  if (item.purchaseDate) {
+    if (!isValid(new Date(item.purchaseDate))) {
+      throw new Error('Invalid date')
+    }
   }
 
   if (item.price && item.price < 0) {
     throw new Error('Price cannot be negative')
   }
 
-  const currentItem = new ItemModel(item)
+  const currentItem = new ItemModel({
+    ...item,
+    purchaseDate: item.purchaseDate ? new Date(item.purchaseDate) : undefined,
+  })
 
   try {
     const newItem = await currentItem.save()
@@ -37,9 +42,13 @@ export const getItems = async (loggedUser: IUser) => {
     success: true,
   }
 
-  const items = await ItemModel.find<IItem>({ user: loggedUser._id }).exec()
+  try {
+    const items = await ItemModel.find<IItem>({ user: loggedUser._id }).exec()
 
-  response = { ...response, data: { items } }
+    response = { ...response, data: { items } }
+  } catch (e) {
+    handleMongoDBErrors(e)
+  }
 
   return response
 }
@@ -90,9 +99,7 @@ export const getBrandsName = async (loggedUser: IUser) => {
       },
     ]).exec()
 
-    const brands = data.map((brand) => ({
-      value: brand?._id?.brand,
-    }))
+    const brands = data.map((brand) => brand?._id?.brand)
 
     response = { ...response, data: { brands } }
   } catch (error) {
@@ -102,17 +109,9 @@ export const getBrandsName = async (loggedUser: IUser) => {
   return response
 }
 
-export const updateItem = async (_id: IItem['_id'], item: IItem, loggedUser: IUser) => {
+export const updateItem = async (_id: IItem['_id'], item: IUpdateItemInput, loggedUser: IUser) => {
   let response: ResponseType = {
     success: true,
-  }
-
-  if (!isValid(item.purchaseDate)) {
-    throw new Error('Purchase date is invalid')
-  }
-
-  if (item.price && item.price < 0) {
-    throw new Error('Price cannot be negative')
   }
 
   const oldItem = await ItemModel.findById(_id).exec()
@@ -121,116 +120,14 @@ export const updateItem = async (_id: IItem['_id'], item: IItem, loggedUser: IUs
     throw new Error('Item not found')
   }
 
-  if (loggedUser._id !== oldItem.user.toString() && loggedUser.permission < 10) {
-    throw new Error('Unauthorized')
-  }
-
-  try {
-    const newItem = await ItemModel.findByIdAndUpdate<IItem>(
-      _id,
-      {
-        $set: { ...item },
-      },
-      { new: true },
-    ).exec()
-    response = { ...response, data: { item: newItem } }
-  } catch (e) {
-    throw handleMongoDBErrors(e)
-  }
-
-  return response
-}
-
-export const setInvoice = async (_id: IItem['_id'], file: IFile, loggedUser: IUser) => {
-  let response: ResponseType = {
-    success: true,
-  }
-
-  if (file?._id === undefined || file?.filename === undefined) {
-    throw new Error('File not found')
-  }
-
-  const oldItem = await ItemModel.findById(_id).exec()
-
-  if (oldItem?.invoice === undefined) {
-    throw new Error('Item has already an invoice')
-  }
-
-  if (loggedUser._id !== oldItem.user.toString() && loggedUser.permission < 10) {
-    throw new Error('Unauthorized')
-  }
-
-  try {
-    const newItem = await ItemModel.findByIdAndUpdate<IItem>(
-      _id,
-      {
-        $set: {
-          invoice: {
-            _id: file._id,
-            filename: file.filename,
-          },
-        },
-      },
-      { new: true },
-    ).exec()
-    response = { ...response, data: { item: newItem } }
-  } catch (e) {
-    throw handleMongoDBErrors(e)
-  }
-
-  return response
-}
-
-export const deleteInvoice = async (_id: IItem['_id'], loggedUser: IUser) => {
-  let response: ResponseType = {
-    success: true,
-  }
-
-  const oldItem = await ItemModel.findById(_id).exec()
-
-  if (oldItem?.invoice === undefined) {
-    throw new Error('Item has no invoice')
-  }
-
-  if (loggedUser._id !== oldItem.user.toString() && loggedUser.permission < 10) {
-    throw new Error('Unauthorized')
-  }
-
-  try {
-    await FileModel.findByIdAndDelete<IFile>(oldItem?.invoice._id.toString()).exec()
-    const newItem = await ItemModel.findByIdAndUpdate<IItem>(
-      _id,
-      {
-        $unset: {
-          invoice: '',
-        },
-      },
-      { new: true },
-    ).exec()
-    response = {
-      ...response,
-      data: { item: newItem },
+  if (item.purchaseDate) {
+    if (!isValid(new Date(item.purchaseDate))) {
+      throw new Error('Invalid date')
     }
-  } catch (e) {
-    throw handleMongoDBErrors(e)
   }
 
-  return response
-}
-
-export const setImage = async (_id: IItem['_id'], file: IFile, loggedUser: IUser) => {
-  let response: ResponseType = {
-    success: true,
-  }
-
-  if (file?._id === undefined || file?.filename === undefined) {
-    throw new Error('File not found')
-  }
-
-  const oldItem = await ItemModel.findById<IItem>(_id).exec()
-
-  if (oldItem?.image === undefined) {
-    throw new Error('Item has already an image')
+  if (item.price && item.price < 0) {
+    throw new Error('Price cannot be negative')
   }
 
   if (loggedUser._id !== oldItem.user.toString() && loggedUser.permission < 10) {
@@ -241,12 +138,7 @@ export const setImage = async (_id: IItem['_id'], file: IFile, loggedUser: IUser
     const newItem = await ItemModel.findByIdAndUpdate<IItem>(
       _id,
       {
-        $set: {
-          image: {
-            _id: file._id,
-            filename: file.filename,
-          },
-        },
+        $set: { ...item, purchaseDate: item.purchaseDate ? new Date(item.purchaseDate) : undefined },
       },
       { new: true },
     ).exec()
@@ -276,45 +168,11 @@ export const deleteItem = async (_id: IItem['_id'], loggedUser: IUser) => {
 
   try {
     const deletedItem = await ItemModel.findByIdAndDelete<IItem>(_id).exec()
-    await FileModel.findByIdAndDelete(deletedItem?.invoice._id).exec()
-    await FileModel.findByIdAndDelete(deletedItem?.image._id).exec()
-  } catch (e) {
-    throw handleMongoDBErrors(e)
-  }
-
-  return response
-}
-
-export const deleteImage = async (_id: IItem['_id'], loggedUser: IUser) => {
-  let response: ResponseType = {
-    success: true,
-  }
-
-  const oldItem = await ItemModel.findById(_id).exec()
-
-  if (oldItem === null) {
-    throw new Error('Item not found')
-  }
-
-  if (loggedUser._id !== oldItem.user.toString() && loggedUser.permission < 10) {
-    response = { ...response, success: false, error: 'Unauthorized' }
-    return response
-  }
-
-  try {
-    await FileModel.findByIdAndDelete(oldItem?.image._id.toString()).exec()
-    const newItem = await ItemModel.findByIdAndUpdate(
-      _id,
-      {
-        $unset: {
-          image: '',
-        },
-      },
-      { new: true },
-    ).exec()
-    response = {
-      ...response,
-      data: { item: newItem },
+    if (deletedItem?.invoice) {
+      await FileModel.findByIdAndDelete<IFile>(deletedItem.invoice._id.toString()).exec()
+    }
+    if (deletedItem?.image) {
+      await FileModel.findByIdAndDelete<IFile>(deletedItem.image._id.toString()).exec()
     }
   } catch (e) {
     throw handleMongoDBErrors(e)
