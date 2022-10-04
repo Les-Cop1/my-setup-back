@@ -18,7 +18,3 @@ export const getCategories = async () => {
 
   return response
 }
-
-module.exports = {
-  getCategories,
-}
