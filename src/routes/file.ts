@@ -1,27 +1,22 @@
 import express, { Response } from 'express'
 
-import { deleteFile, getFile, uploadFile } from '@controllers'
+import { getFile } from '@controllers'
 import { authenticated } from '@helpers'
-import { AuthenticatedRequest, ICreateFileInput, IFile, IUser, ResponseType } from '@types'
+import { AuthenticatedRequest, IFile, IUser, ResponseType } from '@types'
 
-import multer from 'multer'
 import path from 'path'
 
 const router = express.Router()
-const upload = multer({})
-
-router.use(upload.single('file'))
 
 router.get('/:_id', authenticated, async (req: AuthenticatedRequest, res: Response) => {
   let response: ResponseType = {
     success: true,
-    data: {},
   }
 
   const { _id } = req.params
 
   try {
-    response = { ...response, data: await getFile(<IFile['_id']>_id, <IUser>req.user) }
+    response = { ...response, ...(await getFile(<IFile['_id']>_id, <IUser>req.user)) }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
@@ -41,36 +36,6 @@ router.get('/:_id', authenticated, async (req: AuthenticatedRequest, res: Respon
   })
 
   res.end(file)
-})
-
-router.post('/', authenticated, async (req: AuthenticatedRequest, res: Response) => {
-  let response: ResponseType = {
-    success: true,
-  }
-
-  try {
-    response = { ...response, data: await uploadFile(<ICreateFileInput>req.file, <IUser>req.user) }
-  } catch (error: any) {
-    response = { ...response, success: false, error: error.message }
-  }
-
-  res.send(response)
-})
-
-router.delete('/:_id', authenticated, async (req: AuthenticatedRequest, res: Response) => {
-  let response: ResponseType = {
-    success: true,
-  }
-
-  const { _id } = req.params
-
-  try {
-    response = { ...response, data: await deleteFile(<IFile['_id']>_id, <IUser>req.user) }
-  } catch (error: any) {
-    response = { ...response, success: false, error: error.message }
-  }
-
-  res.send(response)
 })
 
 export { router as fileRouter }

@@ -1,7 +1,7 @@
 import express, { Express } from 'express'
 
 import { databaseConnection, getCorsOptions } from '@helpers'
-import { authenticationRouter, categoryRouter, fileRouter, indexRouter, roomRouter, userRouter } from '@routes'
+import { authenticationRouter, categoryRouter, fileRouter, indexRouter, itemRouter, roomRouter, userRouter } from '@routes'
 
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
@@ -23,13 +23,14 @@ app.use('/api/user', userRouter)
 app.use('/api/room', roomRouter)
 app.use('/api/file', fileRouter)
 app.use('/api/category', categoryRouter)
+app.use('/api/item', itemRouter)
 
 databaseConnection()
   .then(() => {
-    console.info('[Starting] Connected to database')
+    console.info('[starting] Connected to database')
   })
   .catch(() => {
-    console.info('[Starting] Could not connect to database')
+    console.info('[starting] Could not connect to database')
   })
 
 export default app

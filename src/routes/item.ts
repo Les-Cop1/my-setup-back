@@ -1,19 +1,37 @@
 import express, { Response } from 'express'
 
-import { createRoom, deleteRoom, getRoom, getRoomStats, getRooms, updateRoom } from '@controllers'
+import { createItem, deleteItem, getBrandsName, getItem, getItems, updateItem } from '@controllers'
 import { authenticated } from '@helpers'
-import { AuthenticatedRequest, IRoom, IUpdateItemInput, IUser, ResponseType } from '@types'
+import {
+  AuthenticatedRequest,
+  ICreateItemInput,
+  IItem,
+  IUpdateItemInput,
+  IUploadFile,
+  IUser,
+  ResponseType,
+} from '@types'
+
+import multer from 'multer'
 
 const router = express.Router()
+const upload = multer({})
 
-// Get all rooms from user
+router.use(
+  upload.fields([
+    { name: 'invoice', maxCount: 1 },
+    { name: 'image', maxCount: 1 },
+  ]),
+)
+
+// Get all items from user
 router.get('/', authenticated, async (req: AuthenticatedRequest, res: Response) => {
   let response: ResponseType = {
     success: true,
   }
 
   try {
-    response = { ...response, ...(await getRooms(<IUser>req.user)) }
+    response = { ...response, ...(await getItems(<IUser>req.user)) }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
@@ -21,14 +39,14 @@ router.get('/', authenticated, async (req: AuthenticatedRequest, res: Response) 
   res.send(response)
 })
 
-// Get room details
-router.get('/stats', authenticated, async (req: AuthenticatedRequest, res: Response) => {
+// Get brands name
+router.get('/brands', authenticated, async (req: AuthenticatedRequest, res: Response) => {
   let response: ResponseType = {
     success: true,
   }
 
   try {
-    response = { ...response, ...(await getRoomStats(<IUser>req.user)) }
+    response = { ...response, ...(await getBrandsName(<IUser>req.user)) }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
@@ -36,7 +54,7 @@ router.get('/stats', authenticated, async (req: AuthenticatedRequest, res: Respo
   res.send(response)
 })
 
-// Get room details
+// Get item details
 router.get('/:_id', authenticated, async (req: AuthenticatedRequest, res: Response) => {
   let response: ResponseType = {
     success: true,
@@ -45,7 +63,7 @@ router.get('/:_id', authenticated, async (req: AuthenticatedRequest, res: Respon
   const { _id } = req.params
 
   try {
-    response = { ...response, ...(await getRoom(<IRoom['_id']>_id, <IUser>req.user)) }
+    response = { ...response, ...(await getItem(<IItem['_id']>_id, <IUser>req.user)) }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
@@ -53,16 +71,17 @@ router.get('/:_id', authenticated, async (req: AuthenticatedRequest, res: Respon
   res.send(response)
 })
 
-// Create room
+// Create item
 router.post('/', authenticated, async (req: AuthenticatedRequest, res: Response) => {
   let response: ResponseType = {
     success: true,
   }
 
-  const { name } = req.body
-
   try {
-    response = { ...response, ...(await createRoom(<IRoom['name']>name, <IUser>req.user)) }
+    response = {
+      ...response,
+      ...(await createItem(<ICreateItemInput>req.body, <IUploadFile>req.files, <IUser>req.user)),
+    }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
@@ -70,7 +89,7 @@ router.post('/', authenticated, async (req: AuthenticatedRequest, res: Response)
   res.send(response)
 })
 
-// Update room
+// Update item
 router.put('/:_id', authenticated, async (req: AuthenticatedRequest, res: Response) => {
   let response: ResponseType = {
     success: true,
@@ -79,7 +98,10 @@ router.put('/:_id', authenticated, async (req: AuthenticatedRequest, res: Respon
   const { _id } = req.params
 
   try {
-    response = { ...response, ...(await updateRoom(<IRoom['_id']>_id, <IUpdateItemInput>req.body, <IUser>req.user)) }
+    response = {
+      ...response,
+      ...(await updateItem(<IItem['_id']>_id, <IUpdateItemInput>req.body, <IUploadFile>req.files, <IUser>req.user)),
+    }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
@@ -87,7 +109,7 @@ router.put('/:_id', authenticated, async (req: AuthenticatedRequest, res: Respon
   res.send(response)
 })
 
-// Delete room
+// Delete item
 router.delete('/:_id', authenticated, async (req: AuthenticatedRequest, res: Response) => {
   let response: ResponseType = {
     success: true,
@@ -96,7 +118,7 @@ router.delete('/:_id', authenticated, async (req: AuthenticatedRequest, res: Res
   const { _id } = req.params
 
   try {
-    response = { ...response, ...(await deleteRoom(<IRoom['_id']>_id, <IUser>req.user)) }
+    response = { ...response, ...(await deleteItem(<IItem['_id']>_id, <IUser>req.user)) }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
@@ -104,4 +126,4 @@ router.delete('/:_id', authenticated, async (req: AuthenticatedRequest, res: Res
   res.send(response)
 })
 
-export { router as roomRouter }
+export { router as itemRouter }
