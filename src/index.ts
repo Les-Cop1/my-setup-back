@@ -38,7 +38,7 @@ const onListening = () => {
   console.info('[starting] Listening on ' + bind)
 }
 
-const port = normalizePort(parseInt(process.env.PORT || '2013'))
+const port = normalizePort(parseInt(process.env.PORT || '2011'))
 app.set('port', port)
 
 const server = require('http').createServer(app)
