@@ -11,8 +11,10 @@ export interface IFile extends Document {
 }
 
 export interface ICreateFileInput {
-  buffer: Buffer
-  mimetype: string
+  fieldname: string
   originalname: string
+  encoding: string
+  mimetype: string
+  buffer: Buffer
   size: number
 }

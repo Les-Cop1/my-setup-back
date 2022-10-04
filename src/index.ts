@@ -35,10 +35,10 @@ const onError = (error: { syscall: string; code: string }) => {
 const onListening = () => {
   let addr = server.address()
   let bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port
-  console.log('[starting] Listening on ' + bind)
+  console.info('[starting] Listening on ' + bind)
 }
 
-const port = normalizePort(parseInt(process.env.PORT || '2013'))
+const port = normalizePort(parseInt(process.env.PORT || '2011'))
 app.set('port', port)
 
 const server = require('http').createServer(app)

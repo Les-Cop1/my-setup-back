@@ -1,9 +1,8 @@
 import express, { Express } from 'express'
 
 import { databaseConnection, getCorsOptions } from '@helpers'
-import { authenticationRouter, fileRouter, indexRouter, itemRouter, userRouter } from '@routes'
+import { authenticationRouter, fileRouter, indexRouter, itemRouter, roomRouter, userRouter } from '@routes'
 
-import { roomRouter } from './routes/room'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import dotenv from 'dotenv'
