@@ -1,16 +1,42 @@
+import { uploadFile } from '@controllers'
 import { handleMongoDBErrors } from '@helpers'
 import { FileModel, ItemModel } from '@models'
-import { ICreateItemInput, IFile, IItem, IUpdateItemInput, IUser, ResponseType } from '@types'
+import { ICreateItemInput, IFile, IItem, IUpdateItemInput, IUploadFile, IUser, ResponseType } from '@types'
 
 import { isValid } from 'date-fns'
 import { Types } from 'mongoose'
 
-export const createItem = async (item: ICreateItemInput, loggedUser: IUser) => {
+export const createItem = async (item: ICreateItemInput, loggedUser: IUser, files: IUploadFile) => {
   let response: ResponseType = {
     success: true,
   }
 
   item.user = loggedUser._id
+
+  let invoice: IItem['invoice']
+  let image: IItem['image']
+
+  if (files.invoice) {
+    try {
+      const result = await uploadFile(files.invoice[0], loggedUser)
+      if (result.success) {
+        invoice = result.data.file._id
+      }
+    } catch (error) {
+      throw handleMongoDBErrors(error)
+    }
+  }
+
+  if (files.image) {
+    try {
+      const result = await uploadFile(files.image[0], loggedUser)
+      if (result.success) {
+        image = result.data.file._id
+      }
+    } catch (error) {
+      throw handleMongoDBErrors(error)
+    }
+  }
 
   if (item.purchaseDate) {
     if (!isValid(new Date(item.purchaseDate))) {
@@ -24,6 +50,8 @@ export const createItem = async (item: ICreateItemInput, loggedUser: IUser) => {
 
   const currentItem = new ItemModel({
     ...item,
+    invoice,
+    image,
     purchaseDate: item.purchaseDate ? new Date(item.purchaseDate) : undefined,
   })
 

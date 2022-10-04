@@ -2,9 +2,27 @@ import express, { Response } from 'express'
 
 import { createItem, deleteItem, getBrandsName, getItem, getItems, updateItem } from '@controllers'
 import { authenticated } from '@helpers'
-import { AuthenticatedRequest, ICreateItemInput, IItem, IUpdateItemInput, IUser, ResponseType } from '@types'
+import {
+  AuthenticatedRequest,
+  ICreateItemInput,
+  IItem,
+  IUpdateItemInput,
+  IUploadFile,
+  IUser,
+  ResponseType,
+} from '@types'
+
+import multer from 'multer'
 
 const router = express.Router()
+const upload = multer({})
+
+router.use(
+  upload.fields([
+    { name: 'invoice', maxCount: 1 },
+    { name: 'image', maxCount: 1 },
+  ]),
+)
 
 // Get all items from user
 router.get('/', authenticated, async (req: AuthenticatedRequest, res: Response) => {
@@ -60,7 +78,10 @@ router.post('/', authenticated, async (req: AuthenticatedRequest, res: Response)
   }
 
   try {
-    response = { ...response, ...(await createItem(<ICreateItemInput>req.body, <IUser>req.user)) }
+    response = {
+      ...response,
+      ...(await createItem(<ICreateItemInput>req.body, <IUser>req.user, <IUploadFile>req.files)),
+    }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }

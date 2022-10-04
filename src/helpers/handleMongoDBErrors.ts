@@ -1,8 +1,6 @@
 export const handleMongoDBErrors = (error: any) => {
   let handledError
 
-  console.log(error)
-
   switch (error.code) {
     case 11000:
       handledError = `Data already exists`

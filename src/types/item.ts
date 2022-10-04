@@ -1,4 +1,4 @@
-import { IFile, IRoom, IUser } from '@types'
+import { ICreateFileInput, IFile, IRoom, IUser } from '@types'
 
 import { Document } from 'mongoose'
 
@@ -42,4 +42,9 @@ export interface IUpdateItemInput extends Document {
   categories?: string[]
   image?: IFile['_id']
   invoice?: IFile['_id']
+}
+
+export interface IUploadFile {
+  invoice?: ICreateFileInput[]
+  image?: ICreateFileInput[]
 }
