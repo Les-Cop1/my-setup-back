@@ -1,7 +1,7 @@
 import express, { Express } from 'express'
 
 import { databaseConnection, getCorsOptions } from '@helpers'
-import { authenticationRouter, fileRouter, indexRouter, itemRouter, roomRouter, userRouter } from '@routes'
+import { authenticationRouter, categoryRouter, fileRouter, indexRouter, itemRouter, roomRouter, userRouter } from '@routes'
 
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
@@ -22,6 +22,7 @@ app.use('/api/authenticate', authenticationRouter)
 app.use('/api/user', userRouter)
 app.use('/api/room', roomRouter)
 app.use('/api/file', fileRouter)
+app.use('/api/category', categoryRouter)
 app.use('/api/item', itemRouter)
 
 databaseConnection()
