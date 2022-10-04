@@ -1,6 +1,6 @@
 import { handleMongoDBErrors } from '@helpers'
-import { CategoryModel, FileModel } from '@models'
-import { IFile, IItem, IUser, ResponseType } from '@types'
+import { CategoryModel } from '@models'
+import { ResponseType } from '@types'
 
 export const getCategories = async () => {
   let response: ResponseType = {
