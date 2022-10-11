@@ -1,0 +1,44 @@
+name: ✅ Code coverage
+on:
+  pull_request:
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ hashFiles('package.json', 'yarn.lock') }}
+      - name: Install dependencies
+        run: |
+          npm config set always-auth=true
+          yarn install --frozen-lockfile  --network-timeout 1000000
+        env:
+          CI: false
+  tests:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ hashFiles('package.json', 'yarn.lock') }}
+      - name: Building test
+        run: yarn test:cov | tee ./coverage.txt
+        env:
+          MONGO_URL_TEST: ${{ secrets.MONGO_URL_TEST }}
+      - name: PR Comment
+        uses: MishaKav/jest-coverage-comment@main
+        with:
+          coverage-summary-path: ./coverage/coverage-summary.json
+          title: Code Coverage
+          summary-title: Summary
+          badge-title: Coverage
+          coverage-title: Coverage Report
+          coverage-path: ./coverage.txt

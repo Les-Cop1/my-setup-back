@@ -16,7 +16,8 @@
     "setup": "yarn install",
     "start:development": "nodemon",
     "start:production": "node dist/index.js",
-    "test": "cross-env NODE_ENV=test jest "
+    "test": "cross-env NODE_ENV=test jest",
+    "test:cov": "cross-env NODE_ENV=test jest --coverage"
   },
   "contributors": [
     {

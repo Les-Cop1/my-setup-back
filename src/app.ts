@@ -1,6 +1,6 @@
 import express from 'express'
 
-import { databaseConnection, getCorsOptions } from '@helpers'
+import { getCorsOptions } from '@helpers'
 import {
   authenticationRouter,
   categoryRouter,
@@ -33,15 +33,5 @@ app.use('/api/room', roomRouter)
 app.use('/api/file', fileRouter)
 app.use('/api/category', categoryRouter)
 app.use('/api/item', itemRouter)
-
-databaseConnection()
-  .then(() => {
-    console.info('[starting] Connected to database')
-    app.isDbConnected = true
-    app.emit('dbConnected')
-  })
-  .catch(() => {
-    console.info('[starting] Could not connect to database')
-  })
 
 export default app
