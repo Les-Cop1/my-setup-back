@@ -80,7 +80,9 @@ export const createUser = async (userData: ICreateUserInput) => {
       ...tmpUser
     } = tmp.toObject()
 
-    response = { ...response, data: { user: tmpUser } }
+    const token = jwt.sign(tmp, process.env.JWT_SECRET || '')
+
+    response = { ...response, data: { user: tmpUser, token } }
   } catch (error) {
     throw handleMongoDBErrors(error)
   }
@@ -178,7 +180,6 @@ export const updateUser = async (_id: string, userData: IUpdateUserInput, logged
   const { password, ...tokenContent } = response.data.user
 
   const token = jwt.sign(tokenContent, process.env.JWT_SECRET || '')
-
   response.data.token = { ...response, data: { token } }
 
   return response

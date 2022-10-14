@@ -47,11 +47,19 @@ router.put('/:_id', authenticated, async (req: AuthenticatedRequest, res: Respon
     success: true,
   }
 
+  const useSecureAuth = process.env.NODE_ENV !== 'development'
+
   try {
     response = {
       ...response,
       ...(await updateUser(<IUser['_id']>req.params._id, <IUpdateUserInput>req.body, <IUser>req.user)),
     }
+
+    res.cookie('auth-token', response.data.token, {
+      maxAge: 31 * 24 * 3600 * 1000 * parseInt(process.env.JWT_EXPIRES_IN || '1'), // in months
+      httpOnly: useSecureAuth,
+      secure: useSecureAuth,
+    })
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
