@@ -80,7 +80,7 @@ export const createUser = async (userData: ICreateUserInput) => {
       ...tmpUser
     } = tmp.toObject()
 
-    const token = jwt.sign(tmp, process.env.JWT_SECRET || '')
+    const token = jwt.sign(tmpUser, process.env.JWT_SECRET || '')
 
     response = { ...response, data: { user: tmpUser, token } }
   } catch (error) {
