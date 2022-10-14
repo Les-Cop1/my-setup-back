@@ -25,8 +25,16 @@ router.post('/', async (req: Request, res: Response) => {
     success: true,
   }
 
+  const useSecureAuth = process.env.NODE_ENV !== 'development'
+
   try {
     response = { ...response, ...(await createUser(<ICreateUserInput>req.body)) }
+
+    res.cookie('auth-token', response.data.token, {
+      maxAge: 31 * 24 * 3600 * 1000 * parseInt(process.env.JWT_EXPIRES_IN || '1'), // in months
+      httpOnly: useSecureAuth,
+      secure: useSecureAuth,
+    })
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
   }
