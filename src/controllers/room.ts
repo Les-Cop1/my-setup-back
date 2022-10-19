@@ -1,6 +1,6 @@
 import { handleMongoDBErrors } from '@helpers'
 import { FileModel, ItemModel, RoomModel } from '@models'
-import { IItem, IRoom, IUpdateItemInput, IUser, ResponseType } from '@types'
+import { IFile, IItem, IRoom, IUpdateItemInput, IUser, ResponseType } from '@types'
 
 interface RoomObjectType {
   [index: string]: {
@@ -120,16 +120,24 @@ export const deleteRoom = async (_id: IRoom['_id'], loggedUser: IUser) => {
   }
 
   try {
-    const deletedRoom = await RoomModel.findByIdAndDelete(_id).exec()
-    response = { ...response, data: { room: deletedRoom } }
+    await RoomModel.findByIdAndDelete(_id).exec()
 
-    const invoices = (await ItemModel.find({ room: _id }).exec())
-      .map((item: IItem) => {
-        return item?.invoice._id
-      })
-      .filter((state) => state !== undefined)
+    let files: IFile['_id'][] = []
+
+    const items = await ItemModel.find({ room: _id }).exec()
+
+    items.forEach((item: IItem) => {
+      if (item?.invoice) {
+        files.push(item.invoice)
+      }
+
+      if (item?.image) {
+        files.push(item.image)
+      }
+    })
+
     await ItemModel.deleteMany({ room: _id }).exec()
-    await FileModel.deleteMany({ _id: { $in: invoices } }).exec()
+    await FileModel.deleteMany({ _id: { $in: files } }).exec()
   } catch (e) {
     throw handleMongoDBErrors(e)
   }
