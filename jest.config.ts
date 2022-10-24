@@ -11,7 +11,7 @@ const config: Config = {
     '@routes': '<rootDir>/src/routes',
     '@types': '<rootDir>/src/types',
   },
-  testTimeout: 5000,
+  testTimeout: 10000,
   coverageDirectory: 'coverage',
   coverageReporters: ['json-summary', 'text'],
   coveragePathIgnorePatterns: [

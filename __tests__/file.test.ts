@@ -1,14 +1,24 @@
 import app from '../src/app'
-import { IUser } from '../src/types'
-import { adminToken } from '../test.config'
+import { adminToken, userToken } from '../test.config'
 
 import request = require('supertest')
 
-let userId: IUser['_id']
-
 describe('GET /', () => {
-  it('returns true', async () => {
-    const res = await request(app).get('/api/file/633c187b37fbd3dbfb3fc36f').set({ bearer: adminToken })
-    expect(res.body.success).toEqual(false)
+  it('displays a file', async () => {
+    const res = await request(app).get('/api/file/6356420be819a7675c1c51da').set({ bearer: adminToken })
+
+    expect(res.statusCode).toEqual(200)
+  })
+
+  it('requires an existing file', async () => {
+    const res = await request(app).get('/api/file/6356420be819b7675c1c51da').set({ bearer: adminToken })
+
+    expect(res.statusCode).toEqual(200)
+  })
+
+  it('requires authorization to access a file', async () => {
+    const res = await request(app).get('/api/file/6356420be819a7675c1c51da').set({ bearer: userToken })
+
+    expect(res.statusCode).toEqual(200)
   })
 })

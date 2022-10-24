@@ -199,11 +199,22 @@ export const updateItem = async (_id: IItem['_id'], item: IUpdateItemInput, logg
     }
   }
 
+  let $unset: any = {}
+
+  if (oldItem.invoice && invoice === '') {
+    $unset.invoice = ''
+  }
+
+  if (oldItem.image && image === '') {
+    $unset.image = ''
+  }
+
   try {
     const newItem = await ItemModel.findByIdAndUpdate<IItem>(
       _id,
       {
         $set: { ...item, purchaseDate: item.purchaseDate ? new Date(item.purchaseDate) : undefined, invoice, image },
+        $unset,
       },
       { new: true },
     ).exec()
