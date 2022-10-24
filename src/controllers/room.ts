@@ -20,10 +20,6 @@ export const createRoom = async (name: string, loggedUser: IUser) => {
     throw new Error('Room name is missing')
   }
 
-  if (loggedUser === undefined) {
-    throw new Error('User is missing')
-  }
-
   const room = new RoomModel({
     name,
     user: loggedUser._id,

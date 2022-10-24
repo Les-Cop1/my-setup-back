@@ -80,7 +80,7 @@ router.post('/', authenticated, async (req: AuthenticatedRequest, res: Response)
   try {
     response = {
       ...response,
-      ...(await createItem(<ICreateItemInput>req.body, <IUploadFile>req.files, <IUser>req.user)),
+      ...(await createItem(<ICreateItemInput>req.body, <IUser>req.user, <IUploadFile>req.files)),
     }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
@@ -100,7 +100,7 @@ router.put('/:_id', authenticated, async (req: AuthenticatedRequest, res: Respon
   try {
     response = {
       ...response,
-      ...(await updateItem(<IItem['_id']>_id, <IUpdateItemInput>req.body, <IUploadFile>req.files, <IUser>req.user)),
+      ...(await updateItem(<IItem['_id']>_id, <IUpdateItemInput>req.body, <IUser>req.user, <IUploadFile>req.files)),
     }
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }

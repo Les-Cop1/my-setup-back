@@ -6,7 +6,7 @@ import { ICreateItemInput, IFile, IItem, IUpdateItemInput, IUploadFile, IUser, R
 import { isValid } from 'date-fns'
 import { Types } from 'mongoose'
 
-export const createItem = async (item: ICreateItemInput, files: IUploadFile, loggedUser: IUser) => {
+export const createItem = async (item: ICreateItemInput, loggedUser: IUser, files?: IUploadFile) => {
   let response: ResponseType = {
     success: true,
   }
@@ -16,25 +16,27 @@ export const createItem = async (item: ICreateItemInput, files: IUploadFile, log
   let invoice: IItem['invoice']
   let image: IItem['image']
 
-  if (files.invoice) {
-    try {
-      const result = await uploadFile(files.invoice[0], loggedUser)
-      if (result.success) {
-        invoice = result.data.file._id
+  if (files) {
+    if (files.invoice) {
+      try {
+        const result = await uploadFile(files.invoice[0], loggedUser)
+        if (result.success) {
+          invoice = result.data.file._id
+        }
+      } catch (error) {
+        throw handleMongoDBErrors(error)
       }
-    } catch (error) {
-      throw handleMongoDBErrors(error)
     }
-  }
 
-  if (files.image) {
-    try {
-      const result = await uploadFile(files.image[0], loggedUser)
-      if (result.success) {
-        image = result.data.file._id
+    if (files.image) {
+      try {
+        const result = await uploadFile(files.image[0], loggedUser)
+        if (result.success) {
+          image = result.data.file._id
+        }
+      } catch (error) {
+        throw handleMongoDBErrors(error)
       }
-    } catch (error) {
-      throw handleMongoDBErrors(error)
     }
   }
 
@@ -137,7 +139,7 @@ export const getBrandsName = async (loggedUser: IUser) => {
   return response
 }
 
-export const updateItem = async (_id: IItem['_id'], item: IUpdateItemInput, files: IUploadFile, loggedUser: IUser) => {
+export const updateItem = async (_id: IItem['_id'], item: IUpdateItemInput, loggedUser: IUser, files?: IUploadFile) => {
   let response: ResponseType = {
     success: true,
   }
@@ -165,33 +167,35 @@ export const updateItem = async (_id: IItem['_id'], item: IUpdateItemInput, file
   let invoice: IItem['invoice']
   let image: IItem['image']
 
-  if (files.invoice) {
-    try {
-      if (oldItem.invoice) {
-        await deleteFile(oldItem.invoice, loggedUser)
-      }
+  if (files) {
+    if (files.invoice) {
+      try {
+        if (oldItem.invoice) {
+          await deleteFile(oldItem.invoice, loggedUser)
+        }
 
-      const result = await uploadFile(files.invoice[0], loggedUser)
-      if (result.success) {
-        invoice = result.data.file._id
+        const result = await uploadFile(files.invoice[0], loggedUser)
+        if (result.success) {
+          invoice = result.data.file._id
+        }
+      } catch (error) {
+        throw handleMongoDBErrors(error)
       }
-    } catch (error) {
-      throw handleMongoDBErrors(error)
     }
-  }
 
-  if (files.image) {
-    try {
-      if (oldItem.image) {
-        await deleteFile(oldItem.image, loggedUser)
-      }
+    if (files.image) {
+      try {
+        if (oldItem.image) {
+          await deleteFile(oldItem.image, loggedUser)
+        }
 
-      const result = await uploadFile(files.image[0], loggedUser)
-      if (result.success) {
-        image = result.data.file._id
+        const result = await uploadFile(files.image[0], loggedUser)
+        if (result.success) {
+          image = result.data.file._id
+        }
+      } catch (error) {
+        throw handleMongoDBErrors(error)
       }
-    } catch (error) {
-      throw handleMongoDBErrors(error)
     }
   }
 

@@ -20,6 +20,7 @@ const config: Config = {
     '<rootDir>/src/index.ts',
     'databaseConnection.ts',
     'getCorsOptions.ts',
+    'test.config.ts',
   ],
 }
 
