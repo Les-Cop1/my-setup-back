@@ -45,6 +45,8 @@ jobs:
         run: yarn test
         env:
           MONGO_URL_TEST: ${{ secrets.MONGO_URL_TEST }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          FILE_SECRET: ${{ secrets.FILE_SECRET }}
   build:
     needs: setup
     runs-on: ubuntu-latest

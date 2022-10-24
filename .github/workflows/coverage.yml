@@ -33,6 +33,8 @@ jobs:
         run: yarn test:cov | tee ./coverage.txt
         env:
           MONGO_URL_TEST: ${{ secrets.MONGO_URL_TEST }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          FILE_SECRET: ${{ secrets.FILE_SECRET }}
       - name: PR Comment
         uses: MishaKav/jest-coverage-comment@main
         with:
