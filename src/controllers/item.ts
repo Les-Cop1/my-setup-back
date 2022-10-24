@@ -166,6 +166,7 @@ export const updateItem = async (_id: IItem['_id'], item: IUpdateItemInput, logg
 
   let invoice: IItem['invoice']
   let image: IItem['image']
+  let $unset: any = {}
 
   if (files) {
     if (files.invoice) {
@@ -197,16 +198,16 @@ export const updateItem = async (_id: IItem['_id'], item: IUpdateItemInput, logg
         throw handleMongoDBErrors(error)
       }
     }
-  }
+  } else {
+    if (oldItem.invoice && item.invoice === '') {
+      $unset.invoice = ''
+      await deleteFile(oldItem.invoice, loggedUser)
+    }
 
-  let $unset: any = {}
-
-  if (oldItem.invoice && invoice === '') {
-    $unset.invoice = ''
-  }
-
-  if (oldItem.image && image === '') {
-    $unset.image = ''
+    if (oldItem.image && item.image === '') {
+      $unset.image = ''
+      await deleteFile(oldItem.image, loggedUser)
+    }
   }
 
   try {
@@ -218,6 +219,7 @@ export const updateItem = async (_id: IItem['_id'], item: IUpdateItemInput, logg
       },
       { new: true },
     ).exec()
+
     response = { ...response, data: { item: newItem } }
   } catch (e) {
     throw handleMongoDBErrors(e)

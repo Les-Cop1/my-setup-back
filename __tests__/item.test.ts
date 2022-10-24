@@ -8,14 +8,17 @@ let itemId: IItem['_id']
 
 describe('POST /', () => {
   it('creates an item', async () => {
-    const res = await request(app).post('/api/item').set({ bearer: adminToken }).send({
-      brand: 'test-brand',
-      model: 'test-model',
-      room: '6356c9b38f7be4979ecc3e04',
-      price: 100,
-      purchaseDate: '2022',
-      description: 'test-description',
-    })
+    const res = await request(app)
+      .post('/api/item')
+      .set({ bearer: adminToken })
+      .field('brand', 'test-brand')
+      .field('model', 'test-model')
+      .field('price', '100')
+      .field('room', '6356c9b38f7be4979ecc3e04')
+      .field('purchaseDate', '2022')
+      .field('description', 'test-description')
+      .attach('invoice', `${__dirname}/ressources/test-file.pdf`)
+
     itemId = res.body.data.item._id
 
     expect(res.body.success).toEqual(true)
@@ -82,6 +85,13 @@ describe('UPDATE /', () => {
     const res = await request(app).put(`/api/item/${itemId}`).set({ bearer: adminToken }).send({ price: 102 })
 
     expect(res.body.data.item.price).toEqual(102)
+    expect(res.body.success).toEqual(true)
+  })
+
+  it('removes invoice from an item', async () => {
+    const res = await request(app).put(`/api/item/${itemId}`).set({ bearer: adminToken }).send({ invoice: '' })
+
+    expect(res.body.data.item.invoice).toBeUndefined()
     expect(res.body.success).toEqual(true)
   })
 
