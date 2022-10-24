@@ -80,7 +80,9 @@ export const createUser = async (userData: ICreateUserInput) => {
       ...tmpUser
     } = tmp.toObject()
 
-    response = { ...response, data: { user: tmpUser } }
+    const token = jwt.sign(tmpUser, process.env.JWT_SECRET || '')
+
+    response = { ...response, data: { user: tmpUser, token } }
   } catch (error) {
     throw handleMongoDBErrors(error)
   }
@@ -120,12 +122,27 @@ export const updateUser = async (_id: string, userData: IUpdateUserInput, logged
     throw new Error('Password and confirmation are not the same')
   }
 
+  let validations = []
+
+  if (userData.username) {
+    validations.push({
+      validator: userData?.username?.length >= 3,
+      message: 'Username must be at least 3 characters long',
+    })
+  }
+
   //Hash du mot de passe
   if (userData.password) {
     if (!userData.old_password) {
       throw new Error('Old password is required')
     }
+
     const oldPassword = userData.old_password || ''
+
+    validations.push(
+      ...passwordValidators(userData.password),
+      ...confirmationValidators(userData.password, userData.confirmation || ''),
+    )
 
     const { password: oldPasswordDb } = oldUser
 
@@ -137,6 +154,12 @@ export const updateUser = async (_id: string, userData: IUpdateUserInput, logged
     const salt = await bcrypt.genSalt(10)
     hashPassword = await bcrypt.hash(userData.password, salt)
     newUser = { ...newUser, password: hashPassword }
+  }
+
+  for (const validation of validations) {
+    if (!validation.validator) {
+      throw new Error(validation.message)
+    }
   }
 
   //Insertion dans la base de donnée
@@ -157,7 +180,6 @@ export const updateUser = async (_id: string, userData: IUpdateUserInput, logged
   const { password, ...tokenContent } = response.data.user
 
   const token = jwt.sign(tokenContent, process.env.JWT_SECRET || '')
-
   response.data.token = { ...response, data: { token } }
 
   return response

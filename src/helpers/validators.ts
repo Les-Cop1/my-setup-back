@@ -34,7 +34,7 @@ export const confirmationValidators = (password: string, confirmation: string) =
   },
   {
     validator: confirmation === password,
-    message: 'Confirmation must be the same as the password',
+    message: 'Password and confirmation are not the same',
   },
 ]
 
