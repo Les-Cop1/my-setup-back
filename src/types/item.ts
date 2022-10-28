@@ -40,8 +40,8 @@ export interface IUpdateItemInput extends Document {
   description?: string
   link?: string
   categories?: string[]
-  image?: IFile['_id']
-  invoice?: IFile['_id']
+  image?: { _id: IFile['_id']; name: IFile['name'] }
+  invoice?: { _id: IFile['_id']; name: IFile['name'] }
 }
 
 export interface IUploadFile {

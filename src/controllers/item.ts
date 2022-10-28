@@ -199,12 +199,12 @@ export const updateItem = async (_id: IItem['_id'], item: IUpdateItemInput, logg
       }
     }
   } else {
-    if (oldItem.invoice && item.invoice === '') {
+    if (oldItem.invoice && item?.invoice?._id === '') {
       $unset.invoice = ''
       await deleteFile(oldItem.invoice, loggedUser)
     }
 
-    if (oldItem.image && item.image === '') {
+    if (oldItem.image && item?.image?._id === '') {
       $unset.image = ''
       await deleteFile(oldItem.image, loggedUser)
     }
