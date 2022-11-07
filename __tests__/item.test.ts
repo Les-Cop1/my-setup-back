@@ -89,7 +89,10 @@ describe('UPDATE /', () => {
   })
 
   it('removes invoice from an item', async () => {
-    const res = await request(app).put(`/api/item/${itemId}`).set({ bearer: adminToken }).send({ invoice: '' })
+    const res = await request(app)
+      .put(`/api/item/${itemId}`)
+      .set({ bearer: adminToken })
+      .send({ invoice: { _id: '', name: '' } })
 
     expect(res.body.data.item.invoice).toBeUndefined()
     expect(res.body.success).toEqual(true)
