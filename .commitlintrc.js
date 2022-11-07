@@ -1,7 +1,6 @@
 module.exports = {
-  extends: ['./node_modules/commitlint-config-gitmoji'],
   rules: {
-    'type-empty': [0],
-    'subject-empty': [0],
+    'start-with-gitmoji': [2, 'always'],
   },
+  plugins: ['gitmoji'],
 }

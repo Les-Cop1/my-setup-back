@@ -9,7 +9,6 @@ export interface IUser extends Document {
 export interface IGetUserInput {
   _id?: IUser['_id']
   username?: IUser['username']
-  password?: IUser['password']
   permission?: IUser['permission']
 }
 
@@ -18,4 +17,12 @@ export interface ICreateUserInput {
   password: IUser['password']
   confirmation: IUser['password']
   permission: IUser['permission']
+}
+
+export interface IUpdateUserInput {
+  username?: IUser['username']
+  password?: IUser['password']
+  old_password?: IUser['password']
+  confirmation?: IUser['password']
+  permission?: IUser['permission']
 }

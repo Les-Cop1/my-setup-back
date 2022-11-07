@@ -1,4 +1,4 @@
-import { Request } from 'express'
+import { Express as ExpressType, Request } from 'express'
 
 import { IUser } from '@types'
 
@@ -12,6 +12,10 @@ export type ResponseType = {
 
 export interface AuthenticatedRequest extends Request {
   user?: IUser
+}
+
+export interface Express extends ExpressType {
+  isDbConnected?: boolean
 }
 
 export const ObjectId = mongoose.Types.ObjectId
