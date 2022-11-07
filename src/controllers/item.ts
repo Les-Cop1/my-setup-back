@@ -73,7 +73,7 @@ export const getItems = async (loggedUser: IUser) => {
   }
 
   try {
-    const items = await ItemModel.find<IItem>({ user: loggedUser._id }).exec()
+    const items = await ItemModel.find<IItem>({ user: loggedUser._id }).populate('categories').exec()
 
     response = { ...response, data: { items } }
   } catch (e) {
@@ -88,7 +88,7 @@ export const getItem = async (_id: IItem['_id'], loggedUser: IUser) => {
     success: true,
   }
 
-  const item = await ItemModel.findById<IItem>(_id).exec()
+  const item = await ItemModel.findById<IItem>(_id).populate('categories').exec()
 
   if (item === null) {
     throw new Error('Item not found')
@@ -166,6 +166,7 @@ export const updateItem = async (_id: IItem['_id'], item: IUpdateItemInput, logg
 
   let invoice: IItem['invoice']
   let image: IItem['image']
+  let categories: IItem['categories']
   let $unset: any = {}
 
   if (files) {
@@ -210,11 +211,21 @@ export const updateItem = async (_id: IItem['_id'], item: IUpdateItemInput, logg
     }
   }
 
+  if (item.categories) {
+    categories = JSON.parse(item.categories)
+  }
+
   try {
     const newItem = await ItemModel.findByIdAndUpdate<IItem>(
       _id,
       {
-        $set: { ...item, purchaseDate: item.purchaseDate ? new Date(item.purchaseDate) : undefined, invoice, image },
+        $set: {
+          ...item,
+          categories,
+          invoice,
+          image,
+          purchaseDate: item.purchaseDate ? new Date(item.purchaseDate) : undefined,
+        },
         $unset,
       },
       { new: true },

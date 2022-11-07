@@ -8,8 +8,7 @@ export const getCategories = async () => {
   }
 
   try {
-    const data = await CategoryModel.find().sort('name').exec()
-    const categories = data.map((category) => category?.name)
+    const categories = await CategoryModel.find().sort('name').exec()
 
     response = { ...response, data: { categories } }
   } catch (e) {

@@ -59,6 +59,7 @@ export const getRoom = async (_id: IRoom['_id'], loggedUser: IUser) => {
   const room = await RoomModel.findById(_id).exec()
 
   const items = await ItemModel.find({ room: _id })
+    .populate('categories')
     .populate({ path: 'image', select: 'name' })
     .populate({ path: 'invoice', select: 'name' })
     .exec()

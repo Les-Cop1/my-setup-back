@@ -25,7 +25,7 @@ export interface ICreateItemInput extends Document {
   purchaseDate?: string
   description?: string
   link?: string
-  categories?: string[]
+  categories?: string
   image?: IFile['_id']
   invoice?: IFile['_id']
 }
@@ -39,7 +39,7 @@ export interface IUpdateItemInput extends Document {
   purchaseDate?: string
   description?: string
   link?: string
-  categories?: string[]
+  categories?: string
   image?: { _id: IFile['_id']; name: IFile['name'] }
   invoice?: { _id: IFile['_id']; name: IFile['name'] }
 }
