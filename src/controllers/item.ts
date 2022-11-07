@@ -6,7 +6,7 @@ import { ICreateItemInput, IFile, IItem, IUpdateItemInput, IUploadFile, IUser, R
 import { isValid } from 'date-fns'
 import { Types } from 'mongoose'
 
-export const createItem = async (item: ICreateItemInput, files: IUploadFile, loggedUser: IUser) => {
+export const createItem = async (item: ICreateItemInput, loggedUser: IUser, files?: IUploadFile) => {
   let response: ResponseType = {
     success: true,
   }
@@ -16,25 +16,27 @@ export const createItem = async (item: ICreateItemInput, files: IUploadFile, log
   let invoice: IItem['invoice']
   let image: IItem['image']
 
-  if (files.invoice) {
-    try {
-      const result = await uploadFile(files.invoice[0], loggedUser)
-      if (result.success) {
-        invoice = result.data.file._id
+  if (files) {
+    if (files.invoice) {
+      try {
+        const result = await uploadFile(files.invoice[0], loggedUser)
+        if (result.success) {
+          invoice = result.data.file._id
+        }
+      } catch (error) {
+        throw handleMongoDBErrors(error)
       }
-    } catch (error) {
-      throw handleMongoDBErrors(error)
     }
-  }
 
-  if (files.image) {
-    try {
-      const result = await uploadFile(files.image[0], loggedUser)
-      if (result.success) {
-        image = result.data.file._id
+    if (files.image) {
+      try {
+        const result = await uploadFile(files.image[0], loggedUser)
+        if (result.success) {
+          image = result.data.file._id
+        }
+      } catch (error) {
+        throw handleMongoDBErrors(error)
       }
-    } catch (error) {
-      throw handleMongoDBErrors(error)
     }
   }
 
@@ -71,7 +73,7 @@ export const getItems = async (loggedUser: IUser) => {
   }
 
   try {
-    const items = await ItemModel.find<IItem>({ user: loggedUser._id }).exec()
+    const items = await ItemModel.find<IItem>({ user: loggedUser._id }).populate('categories').exec()
 
     response = { ...response, data: { items } }
   } catch (e) {
@@ -86,7 +88,7 @@ export const getItem = async (_id: IItem['_id'], loggedUser: IUser) => {
     success: true,
   }
 
-  const item = await ItemModel.findById<IItem>(_id).exec()
+  const item = await ItemModel.findById<IItem>(_id).populate('categories').exec()
 
   if (item === null) {
     throw new Error('Item not found')
@@ -137,7 +139,7 @@ export const getBrandsName = async (loggedUser: IUser) => {
   return response
 }
 
-export const updateItem = async (_id: IItem['_id'], item: IUpdateItemInput, files: IUploadFile, loggedUser: IUser) => {
+export const updateItem = async (_id: IItem['_id'], item: IUpdateItemInput, loggedUser: IUser, files?: IUploadFile) => {
   let response: ResponseType = {
     success: true,
   }
@@ -164,45 +166,71 @@ export const updateItem = async (_id: IItem['_id'], item: IUpdateItemInput, file
 
   let invoice: IItem['invoice']
   let image: IItem['image']
+  let categories: IItem['categories']
+  let $unset: any = {}
 
-  if (files.invoice) {
-    try {
-      if (oldItem.invoice) {
-        await deleteFile(oldItem.invoice, loggedUser)
-      }
+  if (files) {
+    if (files.invoice) {
+      try {
+        if (oldItem.invoice) {
+          await deleteFile(oldItem.invoice, loggedUser)
+        }
 
-      const result = await uploadFile(files.invoice[0], loggedUser)
-      if (result.success) {
-        invoice = result.data.file._id
+        const result = await uploadFile(files.invoice[0], loggedUser)
+        if (result.success) {
+          invoice = result.data.file._id
+        }
+      } catch (error) {
+        throw handleMongoDBErrors(error)
       }
-    } catch (error) {
-      throw handleMongoDBErrors(error)
+    }
+
+    if (files.image) {
+      try {
+        if (oldItem.image) {
+          await deleteFile(oldItem.image, loggedUser)
+        }
+
+        const result = await uploadFile(files.image[0], loggedUser)
+        if (result.success) {
+          image = result.data.file._id
+        }
+      } catch (error) {
+        throw handleMongoDBErrors(error)
+      }
+    }
+  } else {
+    if (oldItem.invoice && item?.invoice?._id === '') {
+      $unset.invoice = ''
+      await deleteFile(oldItem.invoice, loggedUser)
+    }
+
+    if (oldItem.image && item?.image?._id === '') {
+      $unset.image = ''
+      await deleteFile(oldItem.image, loggedUser)
     }
   }
 
-  if (files.image) {
-    try {
-      if (oldItem.image) {
-        await deleteFile(oldItem.image, loggedUser)
-      }
-
-      const result = await uploadFile(files.image[0], loggedUser)
-      if (result.success) {
-        image = result.data.file._id
-      }
-    } catch (error) {
-      throw handleMongoDBErrors(error)
-    }
+  if (item.categories) {
+    categories = JSON.parse(item.categories)
   }
 
   try {
     const newItem = await ItemModel.findByIdAndUpdate<IItem>(
       _id,
       {
-        $set: { ...item, purchaseDate: item.purchaseDate ? new Date(item.purchaseDate) : undefined, invoice, image },
+        $set: {
+          ...item,
+          categories,
+          invoice,
+          image,
+          purchaseDate: item.purchaseDate ? new Date(item.purchaseDate) : undefined,
+        },
+        $unset,
       },
       { new: true },
     ).exec()
+
     response = { ...response, data: { item: newItem } }
   } catch (e) {
     throw handleMongoDBErrors(e)

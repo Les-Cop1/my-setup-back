@@ -3,7 +3,12 @@ import { ICategory } from '@types'
 import mongoose, { Schema } from 'mongoose'
 
 const CategorySchema: Schema = new mongoose.Schema({
-  name: {
+  en: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  fr: {
     type: String,
     required: true,
   },

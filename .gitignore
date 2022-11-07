@@ -5,3 +5,5 @@ yarn-error.log
 deploy.key
 dist/
 .DS_Store
+coverage
+coverage.txt

@@ -20,10 +20,6 @@ export const createRoom = async (name: string, loggedUser: IUser) => {
     throw new Error('Room name is missing')
   }
 
-  if (loggedUser === undefined) {
-    throw new Error('User is missing')
-  }
-
   const room = new RoomModel({
     name,
     user: loggedUser._id,
@@ -62,7 +58,11 @@ export const getRoom = async (_id: IRoom['_id'], loggedUser: IUser) => {
 
   const room = await RoomModel.findById(_id).exec()
 
-  const items = await ItemModel.find({ room: _id }).exec()
+  const items = await ItemModel.find({ room: _id })
+    .populate('categories')
+    .populate({ path: 'image', select: 'name' })
+    .populate({ path: 'invoice', select: 'name' })
+    .exec()
 
   if (room === null) {
     throw new Error('Room not found')

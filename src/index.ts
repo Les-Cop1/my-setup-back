@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import { databaseConnection } from '@helpers'
+
 import app from './app'
 
 const normalizePort = (port: number) => {
@@ -46,3 +48,11 @@ const server = require('http').createServer(app)
 server.listen(port)
 server.on('error', onError)
 server.on('listening', onListening)
+
+databaseConnection()
+  .then(() => {
+    console.info('[starting] Connected to database')
+  })
+  .catch(() => {
+    console.info('[starting] Could not connect to database')
+  })

@@ -32,7 +32,10 @@ const ItemSchema: Schema = new Schema({
   link: {
     type: String,
   },
-  categories: [String],
+  categories: {
+    type: [Schema.Types.ObjectId],
+    ref: 'Category',
+  },
   image: {
     type: Schema.Types.ObjectId,
     ref: 'File',
