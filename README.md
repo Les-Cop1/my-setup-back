@@ -14,6 +14,8 @@ git clone git@github.com:Les-Cop1/my-setup-back.git
 
 Add environment variables:
 
+⚠️The MONGO_URL and MONGO_URL_TEST variables must be url encoded
+
 ```bash
 cp .env.example .env
 ```
