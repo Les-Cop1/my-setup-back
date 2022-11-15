@@ -14,6 +14,8 @@ git clone git@github.com:Les-Cop1/my-setup-back.git
 
 Add environment variables:
 
+⚠️The MONGO_URL and MONGO_URL_TEST variables must be url encoded
+
 ```bash
 cp .env.example .env
 ```
@@ -31,3 +33,5 @@ To start the development server you need to run the following commands:
 ```bash
 yarn start:development
 ```
+
+You probably need to run a frontend server as well. You can find the frontend [here](https://github.com/Les-Cop1/my-setup-back).
