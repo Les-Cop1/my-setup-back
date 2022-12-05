@@ -37,6 +37,7 @@ jobs:
           FILE_SECRET: ${{ secrets.FILE_SECRET }}
       - name: PR Comment
         uses: MishaKav/jest-coverage-comment@main
+        id: coverageComment
         with:
           coverage-summary-path: ./coverage/coverage-summary.json
           title: Code Coverage
@@ -44,3 +45,13 @@ jobs:
           badge-title: Coverage
           coverage-title: Coverage Report
           coverage-path: ./coverage.txt
+      - name: Create the badge
+        if: github.ref == 'refs/heads/main'
+        uses: schneegans/dynamic-badges-action@v1.6.0
+        with:
+          auth: ${{ secrets.JEST_COVERAGE_COMMENT }}
+          gistID: 5af8e780e48356491492bbabd31f5ebb
+          filename: my-setup-back-badge.json
+          label: Coverage
+          message: ${{ steps.coverageComment.outputs.coverage }}%
+          color: ${{ steps.coverageComment.outputs.color }}
