@@ -28,6 +28,6 @@ export const getCorsOptions = (): CorsOptions => {
       credentials: true,
     }
   } else {
-    return { credentials: true }
+    return {}
   }
 }

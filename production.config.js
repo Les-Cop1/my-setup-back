@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'mySETUP',
+      name: 'mySetup',
       script: './dist/index.js',
       autorestart: true,
     },
