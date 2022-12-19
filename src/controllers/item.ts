@@ -15,6 +15,7 @@ export const createItem = async (item: ICreateItemInput, loggedUser: IUser, file
 
   let invoice: IItem['invoice']
   let image: IItem['image']
+  let categories: IItem['categories']
 
   if (files) {
     if (files.invoice) {
@@ -50,10 +51,15 @@ export const createItem = async (item: ICreateItemInput, loggedUser: IUser, file
     throw new Error('Price cannot be negative')
   }
 
+  if (item.categories) {
+    categories = JSON.parse(item.categories)
+  }
+
   const currentItem = new ItemModel({
     ...item,
     invoice,
     image,
+    categories,
     purchaseDate: item.purchaseDate ? new Date(item.purchaseDate) : undefined,
   })
 
