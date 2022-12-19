@@ -34,6 +34,7 @@ router.post('/', async (req: Request, res: Response) => {
       maxAge: 31 * 24 * 3600 * 1000 * parseInt(process.env.JWT_EXPIRES_IN || '1'), // in months
       httpOnly: useSecureAuth,
       secure: useSecureAuth,
+      domain: process.env.COOKIE_DOMAIN,
     })
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }
@@ -59,6 +60,7 @@ router.put('/:_id', authenticated, async (req: AuthenticatedRequest, res: Respon
       maxAge: 31 * 24 * 3600 * 1000 * parseInt(process.env.JWT_EXPIRES_IN || '1'), // in months
       httpOnly: useSecureAuth,
       secure: useSecureAuth,
+      domain: process.env.COOKIE_DOMAIN,
     })
   } catch (error: any) {
     response = { ...response, success: false, error: error.message }

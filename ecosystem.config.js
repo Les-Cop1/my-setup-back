@@ -25,6 +25,7 @@ module.exports = {
         TZ: process.env.TZ,
         JWT_SECRET: process.env.JWT_SECRET,
         FILE_SECRET: process.env.FILE_SECRET,
+        COOKIE_DOMAIN: process.env.COOKIE_DOMAIN,
       },
     },
   },
