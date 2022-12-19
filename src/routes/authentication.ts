@@ -22,6 +22,7 @@ router.get('/', authenticated, (req: AuthenticatedRequest, res: Response) => {
       maxAge: 31 * 24 * 3600 * 1000, // 1 mois
       httpOnly: useSecureAuth,
       secure: useSecureAuth,
+      domain: process.env.COOKIE_DOMAIN,
     })
   }
 
@@ -85,6 +86,7 @@ router.post('/', async (req: Request, res: Response) => {
       maxAge: 31 * 24 * 3600 * 1000 * parseInt(process.env.JWT_EXPIRES_IN || '1'), // in months
       httpOnly: useSecureAuth,
       secure: useSecureAuth,
+      domain: process.env.COOKIE_DOMAIN,
     })
 
     response = { ...response, data: { user: { ...tokenContent, token } } }
@@ -107,6 +109,7 @@ router.delete('/', authenticated, (_req: AuthenticatedRequest, res: Response) =>
 
   res.cookie('auth-token', '', {
     maxAge: -100,
+    domain: process.env.COOKIE_DOMAIN,
   })
 
   return res.send(response)
