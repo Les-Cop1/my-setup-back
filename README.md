@@ -36,4 +36,4 @@ To start the development server you need to run the following commands:
 yarn start:development
 ```
 
-You probably need to run a frontend server as well. You can find the frontend [here](https://github.com/Les-Cop1/my-setup-back).
+You probably need to run a frontend server as well. You can find the frontend [here](https://github.com/Les-Cop1/my-setup).
