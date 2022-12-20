@@ -2,6 +2,7 @@
 node_modules/
 yarn-error.log
 .env
+.env.production
 deploy.key
 dist/
 .DS_Store
